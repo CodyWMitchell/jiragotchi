@@ -1,5 +1,4 @@
 .clippy {
-    // make him fill the whole screen, center him, and make sure his anti-aliasing is turned off
     position: fixed;
     top: 0;
     left: 0;
