@@ -1,0 +1,22 @@
+{
+  "name": "jiragotchi",
+  "version": "1.0.0",
+  "description": "A virtual pet that integrates with JIRA to help prevent rollover",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CodyWMitchell/jiragotchi.git"
+  },
+  "author": "CodyWMitchell",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/CodyWMitchell/jiragotchi/issues"
+  },
+  "homepage": "https://github.com/CodyWMitchell/jiragotchi#readme",
+  "devDependencies": {
+    "electron": "^30.0.9"
+  }
+}
