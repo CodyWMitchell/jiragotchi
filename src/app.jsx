@@ -1,6 +1,11 @@
 import * as React from 'react';
 import { createRoot } from 'react-dom/client';
 import axios from 'axios';
+import caseSprite from './assets/case.png';
+import screenSprite from './assets/screen.png';
+import ev0Sprite from './assets/ev0.png';
+import ev1Sprite from './assets/ev1.png';
+import ev2Sprite from './assets/ev2.png';
 
 const root = createRoot(document.getElementById('root'));
 
@@ -27,11 +32,13 @@ const getJiraJQL = async (jqlArgs) => {
   }
 }
 
-
-
 const App = () => {
     // sprint total time, remaining days in sprint, point total, point remaining, tickets total, tickets remaining, current tickets
     const [sprintData, setSprintData] = React.useState(null);
+    const [currentEvo, setCurrentEvo] = React.useState(0);
+    const evolutions = [ev0Sprite, ev1Sprite, ev2Sprite];
+    const [caseHueOffset, setCaseHueOffset] = React.useState(5);
+    const [screenHueOffset, setScreenHueOffset] = React.useState(5);
 
     const getUserData = async () => {
       // Get user's sprint total time, remaining days in sprint, point total, point remaining, tickets total, tickets remaining, current tickets
@@ -47,10 +54,37 @@ const App = () => {
       });
     });
 
+    const setRandomColors = () => {
+      setCaseHueOffset(Math.floor(Math.random() * 360));
+      setScreenHueOffset(Math.floor(Math.random() * 360));
+    }
+
+    const handleRightClick = (e) => {
+        setRandomColors();
+    }
+
     return (
       <>
-        <h1>RESPONSE FROM REQUEST {process.env.REACT_APP_BASE_URL}:</h1>
-        {JSON.stringify(sprintData || 'No response yet')}
+        <div className='drag-handle'></div>
+        <img
+          src={screenSprite}
+          className='screen pixel-art'
+          alt='screen'
+          style={{ filter: `hue-rotate(${screenHueOffset}deg)` }}
+        />
+        <img
+          src={caseSprite}
+          className='case pixel-art'
+          alt='case'
+          style={{ filter: `hue-rotate(${caseHueOffset}deg)` }}
+        />
+        <img
+          src={evolutions[currentEvo]}
+          className='ev0 pixel-art bouncy'
+          alt='ev0'
+          style={{ filter: `hue-rotate(${screenHueOffset}deg)` }}
+          onContextMenu={handleRightClick}
+        />
       </>
     );
 };
