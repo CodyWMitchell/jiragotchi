@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { createRoot } from 'react-dom/client';
-import clippy from './assets/clippy.png';
 import axios from 'axios';
 
-const root = createRoot(document.body);
+const root = createRoot(document.getElementById('root'));
 
 const axiosAgent = axios.create({
   baseURL: process.env.REACT_APP_JIRA_BASE_URL,
