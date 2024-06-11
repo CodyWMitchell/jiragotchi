@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { createRoot } from 'react-dom/client';
 import axios from 'axios';
-import caseSprite from './assets/case.png';
-import screenSprite from './assets/screen.png';
-import ev0Sprite from './assets/ev0.png';
-import ev1Sprite from './assets/ev1.png';
-import ev2Sprite from './assets/ev2.png';
+import caseSprite from './assets/Case.png';
+import screenSprite from './assets/ScreenBG.png';
+import ev0Sprite from './assets/Evolutions/0.png';
+import ev1Sprite from './assets/Evolutions/1.png';
+import ev2Sprite from './assets/Evolutions/2.png';
 
 const root = createRoot(document.getElementById('root'));
 
