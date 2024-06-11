@@ -3,9 +3,11 @@ import { createRoot } from 'react-dom/client';
 import axios from 'axios';
 import caseSprite from './assets/Case.png';
 import screenSprite from './assets/ScreenBG.png';
-import ev0Sprite from './assets/Evolutions/0.png';
-import ev1Sprite from './assets/Evolutions/1.png';
-import ev2Sprite from './assets/Evolutions/2.png';
+import ev0Sprite from './assets/Evolutions/e0.png';
+import ev2Sprite from './assets/Evolutions/e1.png';
+import ev1Sprite from './assets/Evolutions/e2.png';
+import LayeredImage from './LayeredImage.jsx';
+import DayTracker, { PointTracker } from './Trackers.jsx';
 
 const root = createRoot(document.getElementById('root'));
 
@@ -33,60 +35,72 @@ const getJiraJQL = async (jqlArgs) => {
 }
 
 const App = () => {
-    // sprint total time, remaining days in sprint, point total, point remaining, tickets total, tickets remaining, current tickets
-    const [sprintData, setSprintData] = React.useState(null);
-    const [currentEvo, setCurrentEvo] = React.useState(0);
-    const evolutions = [ev0Sprite, ev1Sprite, ev2Sprite];
-    const [caseHueOffset, setCaseHueOffset] = React.useState(5);
-    const [screenHueOffset, setScreenHueOffset] = React.useState(5);
+  // sprint total time, remaining days in sprint, point total, point remaining, tickets total, tickets remaining, current tickets
+  const [sprintData, setSprintData] = React.useState(null);
+  const [currentEvo, setCurrentEvo] = React.useState(1);
+  const evolutions = [ev0Sprite, ev1Sprite, ev2Sprite];
+  const [caseHueOffset, setCaseHueOffset] = React.useState(5);
+  const [screenHueOffset, setScreenHueOffset] = React.useState(5);
 
-    const getUserData = async () => {
-      // Get user's sprint total time, remaining days in sprint, point total, point remaining, tickets total, tickets remaining, current tickets
-      const userTickets = await getJiraJQL(
-        `assignee = "${process.env.REACT_APP_JIRA_USERNAME}" AND resolution is EMPTY`
-      );
-      return userTickets;
-    };
-
-    React.useEffect(() => {
-      getUserData().then((data) => {
-        setSprintData(data);
-      });
-    });
-
-    const setRandomColors = () => {
-      setCaseHueOffset(Math.floor(Math.random() * 360));
-      setScreenHueOffset(Math.floor(Math.random() * 360));
-    }
-
-    const handleRightClick = (e) => {
-        setRandomColors();
-    }
-
-    return (
-      <>
-        <div className='drag-handle'></div>
-        <img
-          src={screenSprite}
-          className='screen pixel-art'
-          alt='screen'
-          style={{ filter: `hue-rotate(${screenHueOffset}deg)` }}
-        />
-        <img
-          src={caseSprite}
-          className='case pixel-art'
-          alt='case'
-          style={{ filter: `hue-rotate(${caseHueOffset}deg)` }}
-        />
-        <img
-          src={evolutions[currentEvo]}
-          className='ev0 pixel-art bouncy'
-          alt='ev0'
-          style={{ filter: `hue-rotate(${screenHueOffset}deg)` }}
-          onContextMenu={handleRightClick}
-        />
-      </>
+  const getUserData = async () => {
+    // Get user's sprint total time, remaining days in sprint, point total, point remaining, tickets total, tickets remaining, current tickets
+    const userTickets = await getJiraJQL(
+      `assignee = "${process.env.REACT_APP_JIRA_USERNAME}" AND resolution is EMPTY`
     );
+    return userTickets;
+  };
+
+  React.useEffect(() => {
+    getUserData().then((data) => {
+      setSprintData(data);
+    });
+  });
+
+  const setRandomColors = () => {
+    setCaseHueOffset(Math.floor(Math.random() * 360));
+    setScreenHueOffset(Math.floor(Math.random() * 360));
+  }
+
+  const handleRightClick = (e) => {
+    setRandomColors();
+  }
+
+  return (
+    <>
+      <div className='drag-handle'></div>
+      <img
+        src={screenSprite}
+        className='screen pixel-art'
+        alt='screen'
+        style={{ filter: `hue-rotate(${screenHueOffset}deg)` }}
+      />
+      <img
+        src={caseSprite}
+        className='case pixel-art'
+        alt='case'
+        style={{ filter: `hue-rotate(${caseHueOffset}deg)` }}
+
+      />
+      <LayeredImage
+        images={[ev0Sprite, ev1Sprite, ev2Sprite]}
+        displayCount={currentEvo}
+        displayPrevious={false}
+        className='pixel-art bouncy'
+        style={{ filter: `hue-rotate(${screenHueOffset}deg)` }}
+        onContextMenu={handleRightClick}
+      />
+      <DayTracker
+        count={1}
+        className='pixel-art'
+        style={{ filter: `hue-rotate(${screenHueOffset}deg)` }}
+      />
+      <PointTracker
+        count={10}
+        className='pixel-art'
+        style={{ filter: `hue-rotate(${screenHueOffset}deg)` }}
+      />
+    </>
+  );
 };
 
 root.render(<App />);
