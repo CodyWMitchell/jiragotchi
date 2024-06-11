@@ -37,18 +37,21 @@ const getJiraJQL = async (jqlArgs) => {
 const App = () => {
   // sprint total time, remaining days in sprint, point total, point remaining, tickets total, tickets remaining, current tickets
   const [sprintData, setSprintData] = React.useState(null);
-  const [currentEvo, setCurrentEvo] = React.useState(1);
-  const evolutions = [ev0Sprite, ev1Sprite, ev2Sprite];
+  const [currentEvo, setCurrentEvo] = React.useState(0);
   const [caseHueOffset, setCaseHueOffset] = React.useState(5);
   const [screenHueOffset, setScreenHueOffset] = React.useState(5);
+  const [currentDay, setCurrentDay] = React.useState(1);
+  const [remainingPoints, setRemainingPoints] = React.useState(0);
 
-  const [seconds, setSeconds] = React.useState(0);
-  React.useState(() => {
-    const interval = setInterval(() => {
-      setSeconds(seconds => seconds + 1);
-    }, 100);
-    return () => clearInterval(interval);
-  }, []);
+  React.useEffect(() => {
+    if (remainingPoints === 0) {
+      setCurrentEvo((currentEvo + 1));
+      setRemainingPoints(18);
+    }
+    if (remainingPoints % 3 === 0) {
+      setCurrentDay((currentDay + 1));
+    }
+  }, [remainingPoints]);
 
   const getUserData = async () => {
     // Get user's sprint total time, remaining days in sprint, point total, point remaining, tickets total, tickets remaining, current tickets
@@ -74,7 +77,7 @@ const App = () => {
   }
 
   return (
-    <div onContextMenu={handleRightClick}>
+    <div onClick={()=>{setRemainingPoints(remainingPoints-1)}} onContextMenu={handleRightClick}>
       <div className='drag-handle'></div>
       <img
         src={screenSprite}
@@ -97,12 +100,12 @@ const App = () => {
         style={{ filter: `hue-rotate(${screenHueOffset}deg)` }}
       />
       <DayTracker
-        count={seconds%11}
+        count={currentDay%11}
         className='pixel-art'
         style={{ filter: `hue-rotate(${screenHueOffset}deg)` }}
       />
       <PointTracker
-        count={18-(seconds%19)}
+        count={remainingPoints}
         className='pixel-art'
         style={{ filter: `hue-rotate(${screenHueOffset}deg)` }}
       />
