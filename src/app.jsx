@@ -15,24 +15,22 @@ const axiosAgent = axios.create({
   baseURL: process.env.REACT_APP_JIRA_BASE_URL,
   auth: {
     username: process.env.REACT_APP_JIRA_USERNAME,
-    password: process.env.REACT_APP_JIRA_PASSWORD
+    password: process.env.REACT_APP_JIRA_PASSWORD,
   },
   proxy: {
     host: process.env.REACT_APP_PROXY_HOST,
-    port: process.env.REACT_APP_PROXY_PORT
-  }
+    port: process.env.REACT_APP_PROXY_PORT,
+  },
 });
 
 const getJiraJQL = async (jqlArgs) => {
   try {
-    const response = await axiosAgent.get(
-      encodeURI(`/search?jql=${jqlArgs}`)
-    );
+    const response = await axiosAgent.get(encodeURI(`/search?jql=${jqlArgs}`));
     return response.data;
   } catch (error) {
     console.error(error);
   }
-}
+};
 
 const App = () => {
   // sprint total time, remaining days in sprint, point total, point remaining, tickets total, tickets remaining, current tickets
@@ -41,17 +39,7 @@ const App = () => {
   const [caseHueOffset, setCaseHueOffset] = React.useState(5);
   const [screenHueOffset, setScreenHueOffset] = React.useState(5);
   const [currentDay, setCurrentDay] = React.useState(1);
-  const [remainingPoints, setRemainingPoints] = React.useState(0);
-
-  React.useEffect(() => {
-    if (remainingPoints === 0) {
-      setCurrentEvo((currentEvo + 1));
-      setRemainingPoints(18);
-    }
-    if (remainingPoints % 3 === 0) {
-      setCurrentDay((currentDay + 1));
-    }
-  }, [remainingPoints]);
+  const [remainingPoints, setRemainingPoints] = React.useState(18);
 
   const getUserData = async () => {
     // Get user's sprint total time, remaining days in sprint, point total, point remaining, tickets total, tickets remaining, current tickets
@@ -70,14 +58,33 @@ const App = () => {
   const setRandomColors = () => {
     setCaseHueOffset(Math.floor(Math.random() * 360));
     setScreenHueOffset(Math.floor(Math.random() * 360));
-  }
+  };
 
-  const handleRightClick = (e) => {
-    setRandomColors();
-  }
+  const handleKeyDown = (e) => {
+    switch (e.key) {
+      case 'ArrowUp':
+        setCurrentEvo((currentEvo + 1) % 4);
+        break;
+      case 'ArrowLeft':
+        setCurrentDay((currentDay + 1) % 11);
+        break;
+      case 'ArrowRight':
+        setRemainingPoints((remainingPoints - 1)%19);
+        break;
+      default:
+        break;
+    }
+  };
+
+  React.useEffect(() => {
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  });
 
   return (
-    <div onClick={()=>{setRemainingPoints(remainingPoints-1)}} onContextMenu={handleRightClick}>
+    <div onContextMenu={setRandomColors}>
       <div className='drag-handle'></div>
       <img
         src={screenSprite}
@@ -90,7 +97,6 @@ const App = () => {
         className='case pixel-art'
         alt='case'
         style={{ filter: `hue-rotate(${caseHueOffset}deg)` }}
-
       />
       <LayeredImage
         images={[ev0Sprite, ev1Sprite, ev2Sprite]}
@@ -100,7 +106,7 @@ const App = () => {
         style={{ filter: `hue-rotate(${screenHueOffset}deg)` }}
       />
       <DayTracker
-        count={currentDay%11}
+        count={currentDay % 11}
         className='pixel-art'
         style={{ filter: `hue-rotate(${screenHueOffset}deg)` }}
       />
